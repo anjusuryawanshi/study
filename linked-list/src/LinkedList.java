@@ -2,6 +2,7 @@ import java.util.NoSuchElementException;
 
 public class LinkedList<T> {
   int size = 0;
+  protected int modCount = 0;
   Node<T> head = new Node<T>(null, null, null);
 
   public LinkedList() {
@@ -10,11 +11,30 @@ public class LinkedList<T> {
 
 
   public boolean add(T data) {
-    return false;
+    addBefore(data, head);
+    return true;
+  }
+
+  private Node<T> addBefore(T data, Node<T> node) {
+    Node<T> newEntry = new Node<T>(data, node, node);
+    newEntry.prev.next = newEntry;
+    newEntry.next.prev = newEntry;
+    size++;
+    modCount++;
+    return newEntry;
   }
 
   public void add(int index, T data) {
-
+    if (index == 0) {
+      addFirst(data);
+    }
+    if (index > 0) {
+      Node<T> temp = head.next;
+      for (int i = 0; i <= index; i++) {
+        temp = temp.next;
+      }
+      addBefore(data, temp);
+    }
   }
 
   public void addFirst(T data) {
@@ -28,8 +48,11 @@ public class LinkedList<T> {
     return head.next.data;
   }
 
-  public Node<T> getLast() {
-    return null;
+  public T getLast() {
+    if (size == 0) {
+      throw new NoSuchElementException();
+    }
+    return head.prev.data;
   }
 
   public int size() {
